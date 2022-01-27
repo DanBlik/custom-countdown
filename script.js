@@ -2,14 +2,15 @@ const datePicker = document.getElementById('date-picker')
 const countdownForm = document.getElementById('countdownForm')
 const inputContainer = document.getElementById('input-container')
 
-const coundownEl = document.getElementById('countdown')
+const countdownEl = document.getElementById('countdown')
 const coundownElTitle = document.getElementById('countdown-title')
-const coundownBtn = document.getElementById('countdown-button')
+const countdownBtn = document.getElementById('countdown-button')
 const timeElements = document.querySelectorAll('span')
 
 let coundownTitle = ''
 let countdownDate = ''
 let coundownValue = Date
+let coundownActive
 
 const second = 1000
 const minute = second * 60
@@ -21,6 +22,7 @@ datePicker.setAttribute('min', today)
 
 // Listeners
 countdownForm.addEventListener('submit', countdownFormSubmited)
+countdownBtn.addEventListener('click', reset)
 
 function countdownFormSubmited (e) {
   e.preventDefault()
@@ -32,20 +34,31 @@ function countdownFormSubmited (e) {
 }
 
 function updateDOM() {
-  const now = new Date().getTime()
-  const distance = coundownValue - now
+  coundownActive = setInterval(() => {
+    const now = new Date().getTime()
+    const distance = coundownValue - now
 
-  const days = Math.floor(distance / day)
-  const hours = Math.floor((distance % day) / hour)
-  const minutes = Math.floor((distance % hour) / minute)
-  const seconds = Math.floor((distance % minute) / second)
+    const days = Math.floor(distance / day)
+    const hours = Math.floor((distance % day) / hour)
+    const minutes = Math.floor((distance % hour) / minute)
+    const seconds = Math.floor((distance % minute) / second)
 
-  coundownElTitle.textContent = coundownTitle
-  timeElements[0].textContent = days
-  timeElements[1].textContent = hours
-  timeElements[2].textContent = minutes
-  timeElements[3].textContent = seconds
+    coundownElTitle.textContent = coundownTitle
+    timeElements[0].textContent = days
+    timeElements[1].textContent = hours
+    timeElements[2].textContent = minutes
+    timeElements[3].textContent = seconds
 
-  inputContainer.hidden = true
-  coundownEl.hidden = false
+    inputContainer.hidden = true
+    countdownEl.hidden = false
+  }, second)
+}
+
+function reset () {
+  countdownEl.hidden = true
+  inputContainer.hidden = false
+
+  clearInterval(coundownActive)
+  coundownTitle = ''
+  countdownDate = ''
 }
